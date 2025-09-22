@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-            maven 'mvn_3.9.11'  // Make sure this Maven tool is defined in Jenkins global tools
+            maven 'mvn_3.9.10'  // Make sure this Maven tool is defined in Jenkins global tools
         }
 
     environment {
@@ -47,17 +47,13 @@ pipeline {
         stage('Deploy to EC2') {
             steps {
                 sshagent (credentials: [SSH_KEY_ID]) {
-                    // Create app directory if not exists
-                    sh """
-                        ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} 'mkdir -p ${APP_DIR}'
-                    """
+                    echo 'Create app directory if not exists'
+                    sh 'ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} 'mkdir -p ${APP_DIR}''
 
-                    // Copy jar to EC2
-                    sh """
-                        scp -o StrictHostKeyChecking=no target/${JAR_NAME} ${EC2_USER}@${EC2_HOST}:${APP_DIR}/
-                    """
+                    echo 'Copy jar to EC2'
+                    sh 'scp -o StrictHostKeyChecking=no target/${JAR_NAME} ${EC2_USER}@${EC2_HOST}:${APP_DIR}/'
 
-                    // Restart app on EC2
+                    echo 'Restart app on EC2'
                     sh """
                         ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST}
                         pkill -f ${JAR_NAME} || true &&
