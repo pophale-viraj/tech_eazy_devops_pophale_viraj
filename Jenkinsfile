@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+            maven 'mvn_3.9.11'  // Make sure this Maven tool is defined in Jenkins global tools
+        }
+
     environment {
         EC2_HOST = "3.111.170.112"                 // replace with your EC2 public IP
         EC2_USER = "ubuntu"
@@ -10,15 +14,33 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
+        /* stage('Checkout') {
             steps {
                 git branch: 'master', url: 'https://github.com/pophale-viraj/tech_eazy_devops_pophale_viraj.git'
             }
+        } */
+
+        stage('Code Compilation') {
+            steps {
+                echo 'Starting Code Compilation...'
+                sh 'mvn clean compile'
+                echo 'Code Compilation Completed Successfully!'
+            }
         }
 
-        stage('Build') {
+        stage('Code QA Execution') {
             steps {
+                echo 'Running JUnit Test Cases...'
+                sh 'mvn clean test'
+                echo 'JUnit Test Cases Completed Successfully!'
+            }
+        }
+
+        stage('Code Package') {
+            steps {
+                echo 'Creating WAR Artifact...'
                 sh 'mvn clean package'
+                echo 'WAR Artifact Created Successfully!'
             }
         }
 
