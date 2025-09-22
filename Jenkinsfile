@@ -47,18 +47,20 @@ pipeline {
         stage('Deploy to EC2') {
             steps {
                 sshagent (credentials: [SSH_KEY_ID]) {
-                    echo 'Create app directory if not exists'
-                    sh 'ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} 'mkdir -p ${APP_DIR}''
+                    script {
+                        echo 'Create app directory if not exists'
+                        sh 'ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} 'mkdir -p ${APP_DIR}''
 
-                    echo 'Copy jar to EC2'
-                    sh 'scp -o StrictHostKeyChecking=no target/${JAR_NAME} ${EC2_USER}@${EC2_HOST}:${APP_DIR}/'
+                        echo 'Copy jar to EC2'
+                        sh 'scp -o StrictHostKeyChecking=no target/${JAR_NAME} ${EC2_USER}@${EC2_HOST}:${APP_DIR}/'
 
-                    echo 'Restart app on EC2'
-                    sh """
+                        echo 'Restart app on EC2'
+                        sh """
                         ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST}
                         pkill -f ${JAR_NAME} || true &&
                         nohup java -jar ${APP_DIR}/${JAR_NAME} > ${APP_DIR}/app.log 2>&1 &
-                    """
+                        """
+                    }
                 }
             }
         }
