@@ -14,11 +14,11 @@ pipeline {
     }
 
     stages {
-        /* stage('Checkout') {
+        stage('Checkout') {
             steps {
                 git branch: 'master', url: 'https://github.com/pophale-viraj/tech_eazy_devops_pophale_viraj.git'
             }
-        } */
+        }
 
         stage('Code Compilation') {
             steps {
