@@ -59,10 +59,9 @@ pipeline {
 
                     // Restart app on EC2
                     sh """
-                        ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} '
-                            pkill -f ${JAR_NAME} || true &&
-                            nohup java -jar ${APP_DIR}/${JAR_NAME} > ${APP_DIR}/app.log 2>&1 &
-                        '
+                        ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST}
+                        pkill -f ${JAR_NAME} || true &&
+                        nohup java -jar ${APP_DIR}/${JAR_NAME} > ${APP_DIR}/app.log 2>&1 &
                     """
                 }
             }
